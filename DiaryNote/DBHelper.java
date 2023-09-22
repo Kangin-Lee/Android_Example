@@ -48,4 +48,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return cursor;
     }
+
+    // 날짜에 맞는 레코드를 삭제하는 메서드
+    public void deleteRecord(String date) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("mytable", "date = ?", new String[]{date});
+        db.close();
+    }
 }

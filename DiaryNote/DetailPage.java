@@ -21,7 +21,7 @@ import java.util.Date;
 public class DetailPage extends AppCompatActivity {
 
     private TextView detailDate;
-    private Button cancelBtn, submitBtn;
+    private Button cancelBtn, submitBtn, deleteBtn;
 
     private EditText detailTitle, detailContents;
 
@@ -45,6 +45,7 @@ public class DetailPage extends AppCompatActivity {
         detailTitle=findViewById(R.id.detailTitle);
         detailContents = findViewById(R.id.detailContents);
         submitBtn = findViewById(R.id.submitBtn);
+        deleteBtn = findViewById(R.id.deleteBtn);
 
 //        날짜지정------------------------------------------------------------
         Date currentDate = new Date();
@@ -55,7 +56,7 @@ public class DetailPage extends AppCompatActivity {
         detailDate = findViewById(R.id.detailDate);
 
         Intent intent = getIntent();
-        String Date = intent.getStringExtra("Date");
+        String Date = intent.getStringExtra("selectDate");
 
         detailDate.setText(Date);
 
@@ -88,14 +89,6 @@ public class DetailPage extends AppCompatActivity {
             detailContents.setText("");
         }
 
-
-//        Intent intent2 = getIntent();
-//        String getTitle = intent2.getStringExtra("mainTitle");
-//        String getContents = intent2.getStringExtra("mainContents");
-//        detailTitle.setText(getTitle);
-//        detailContents.setText(getContents);
-
-
 //        취소 버튼 이벤트-------------------------------------------------------
         cancelBtn.setOnClickListener(view -> {
             CancelConfirmationDialog();
@@ -107,27 +100,37 @@ public class DetailPage extends AppCompatActivity {
         submitBtn.setOnClickListener(view -> {
             String detailTitle1 = detailTitle.getText().toString();
             String detailContents1 = detailContents.getText().toString();
-            if(detailTitle1.isEmpty() && detailContents1.isEmpty()){
-                Toast.makeText(this, "정확히 입력해 주세요.", Toast.LENGTH_SHORT).show();
+
+            // 디비에 insert 또는 update 하기
+            ContentValues values = new ContentValues();
+            values.put("title", detailTitle1);
+            values.put("contents", detailContents1);
+            values.put("date", detailDate.getText().toString());
+
+            // 날짜에 해당하는 레코드가 이미 존재하는지 확인
+            Cursor cursor1 = db.query("mytable", null, "date = ?", new String[]{detailDate.getText().toString()}, null, null, null);
+
+            if (cursor1.getCount() > 0) {
+                // 날짜에 해당하는 레코드가 이미 존재하면 업데이트
+                db.update("mytable", values, "date = ?", new String[]{detailDate.getText().toString()});
+                Toast.makeText(this, "내용이 업데이트되었습니다.", Toast.LENGTH_SHORT).show();
+            } else {
+                // 날짜에 해당하는 레코드가 없으면 새로운 레코드로 insert
+                db.insert("mytable", null, values);
+                Toast.makeText(this, "내용이 저장되었습니다.", Toast.LENGTH_SHORT).show();
             }
-            else if(detailTitle1.isEmpty()) {
-                Toast.makeText(this, "제목을 입력해 주세요.", Toast.LENGTH_SHORT).show();
-            } else if (detailContents1.isEmpty()) {
-                Toast.makeText(this, "내용을 입력해 주세요.", Toast.LENGTH_SHORT).show();
-            }else{
-                //디비에 insert 하기
-                ContentValues values = new ContentValues();
-                values.put("title",detailTitle.getText().toString());
-                values.put("contents",detailContents.getText().toString());
-                values.put("date",detailDate.getText().toString());
-                db.insert("mytable",null,values);
 
+            cursor.close();
+            db.close();
 
-                Intent intent1 = new Intent(getApplicationContext(), MainActivity.class);
-                intent1.putExtra("date",formattedDate);
-                startActivity(intent1);
-            }
+            Intent intent1 = new Intent(getApplicationContext(), MainActivity.class);
+            intent1.putExtra("date", formattedDate);
+            startActivity(intent1);
+        });
 
+//        삭제 버튼 이벤트 디비에서 삭제까지----------------------------------------------------------
+        deleteBtn.setOnClickListener(view -> {
+            DeleteConfirmationDialog();
         });
     }
     private void CancelConfirmationDialog() {
@@ -136,6 +139,32 @@ public class DetailPage extends AppCompatActivity {
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+//    삭제 알람창 디비 삭제까지--------------------------------------------------------
+    private void DeleteConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("정말 삭제하시겠습니까?");
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+//                ************************삭제 디비 들어갈 곳 ******************************
+                DBHelper dbHelper = new DBHelper(DetailPage.this, "userContents.db", null, 1);
+                dbHelper.deleteRecord(detailDate.getText().toString());
                 dialog.dismiss();
                 finish();
             }

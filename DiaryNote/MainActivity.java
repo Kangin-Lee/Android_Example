@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         diaryLayout.setOnClickListener(view -> {
 
             Intent intent = new Intent(getApplicationContext(), DetailPage.class);
+            intent.putExtra("selectDate",selectDate);
             startActivity(intent);
         });
 
@@ -70,52 +71,8 @@ public class MainActivity extends AppCompatActivity {
                     txtTitle.setText("");
                     txtContents.setText("");
                 }
-
-//                Intent intent = new Intent(getApplicationContext(), DetailPage.class);
-//                intent.putExtra("Year", year);
-//                intent.putExtra("Month", month);
-//                intent.putExtra("Day", dayOfMonth);
-//                selectDate = (year+"."+(month+1)+"."+dayOfMonth).toString();
-//                startActivity(intent);
             }
         });
-
-
-//        글작성 페이지에서 쓴 제목, 내용 받기--------------------------------------------------------
-//        Intent intent = getIntent();
-//        String detailTitle = intent.getStringExtra("title");
-//        String detailContents = intent.getStringExtra("contents");
-//        txtTitle.setText(detailTitle);
-//        txtContents.setText(detailContents);
-
-//        데이터베이스에 있는 값 출력하기------------------------------------------------------------if else문 써서 날짜랑 같으면 꺼내라 이런식이면 될 듯?
-        // 데이터베이스 생성 또는 열기
-
-//        String[] columns = {"title", "contents", "date"};
-//        Cursor cursor = db.query("mytable", columns, null, null, null, null, null);
-//
-//
-//        while (cursor.moveToNext()) {
-//            @SuppressLint("Range") String dbtitle = cursor.getString(cursor.getColumnIndex("title"));
-//            @SuppressLint("Range") String dbcontents = cursor.getString(cursor.getColumnIndex("contents"));
-//            @SuppressLint("Range") String date = cursor.getString(cursor.getColumnIndex("date"));
-//
-//            Intent intent = getIntent();
-//            String detailDate = intent.getStringExtra("date");
-//            // 가져온 데이터를 사용하여 원하는 처리를 수행합니다.
-//            txtTitle.setText(detailDate);
-//            txtContents.setText(dbcontents);
-//        }
-
-
-//        // 결과 출력
-//        String sql = "select * from mytable where date = '" + selectDate + "';";
-//        Cursor c = db.rawQuery(sql, null);
-//        while(c.moveToNext()){
-//            txtTitle.setText(c.getColumnIndex("title"));
-//            txtContents.setText(c.getColumnIndex("contents"));
-//        }
-
     }
 
     private void dateChange() {
@@ -151,13 +108,6 @@ public class MainActivity extends AppCompatActivity {
                     txtTitle.setText("");
                     txtContents.setText("");
                 }
-
-//                Intent intent = new Intent(getApplicationContext(), DetailPage.class);
-//                intent.putExtra("Year", year);
-//                intent.putExtra("Month", month);
-//                intent.putExtra("Day", dayOfMonth);
-//                selectDate = (year+"."+(month+1)+"."+dayOfMonth).toString();
-//                startActivity(intent);
             }
         });
     }

@@ -53,21 +53,6 @@ public class Register extends AppCompatActivity {
                 Intent intent = new Intent(Register.this, Login.class);
                 startActivity(intent);
             }
-
-
-//            // 패스워드와 패스워드 확인이 일치하는지 확인
-//            if (!password.equals(confirmPassword)) {
-//                // 패스워드가 일치하지 않으면 오류 메시지 표시
-//                Toast.makeText(Register.this, "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
-//            } else {
-//                // 회원 정보를 저장 (예: SharedPreferences 사용)
-//                SharedPreferences sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
-//                SharedPreferences.Editor editor = sharedPreferences.edit();
-//                editor.putString("username", username);
-//                editor.putString("password", password);
-//                editor.apply();
-//
-//            }
         });
     }
 }
